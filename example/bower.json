@@ -1,0 +1,17 @@
+{
+  "name": "node-pelcod-example",
+  "version": "0.1.0",
+  "description": "Example",
+  "main": "server.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-touchswipe": "~1.6.4"
+  }
+}

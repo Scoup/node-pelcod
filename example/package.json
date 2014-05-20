@@ -1,0 +1,17 @@
+{
+  "name": "node-pelcod example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Léo Haddad M. C. Carneiro <scoup001@gmail.com> (http://github.com/Scoup)",
+  "license": "BSD",
+  "dependencies": {
+    "express": "~4.2.0",
+    "serialport": "~1.4.0",
+    "socket.io": "~0.9.16"
+  }
+}

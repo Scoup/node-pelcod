@@ -1,0 +1,6 @@
+.git*
+example/
+test/
+tmp/
+.DS_Store
+.travis.yml
