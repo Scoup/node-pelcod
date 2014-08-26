@@ -19,7 +19,7 @@ Require some serial stream like [serialport](https://github.com/voodootikigod/no
 
 ```javascript
 var Pelcod = require('pelcod');
-var pelcod = new Pelcod(stream)
+var pelcod = new Pelcod(stream, options)
 ```
 
 
