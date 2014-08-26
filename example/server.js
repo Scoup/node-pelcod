@@ -12,7 +12,7 @@ app.get('/', function(req, res){
 
 server.listen(8000)
 
-var PelcoD = require('../libs/pelcod')
+var PelcoD = require('../pelcod')
 
 var SerialPort = require("serialport").SerialPort
 var serialPort = new SerialPort("/dev/ttyUSB0", {

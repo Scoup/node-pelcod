@@ -161,6 +161,7 @@
 var a = 1
     , SYNC = 0xFF
     , Bytes = require('./libs/bytes')
+    , extend = require('node.extend')
 
 function PelcoD(stream, options) {
     this.stream = stream
@@ -169,7 +170,7 @@ function PelcoD(stream, options) {
         addrs: [],
         defaultAddr: 0x01
     }
-    this.options = defaultOptions
+    this.options = extend(defaultOptions, options)
 
     var bts = [
         SYNC                        // sync
@@ -325,7 +326,7 @@ PelcoD.prototype.stop = function() {
  */
 PelcoD.prototype.send = function(callback) {
     var buffer = this.bytes.getBuffer()
-    if(this.stream === undefined || this.stream.write === undefined)
+    if(typeof(this.stream) === 'undefined' || typeof(this.stream.write) === 'undefined')
         console.warn('Stream pipe not found')
     else
         this.stream.write(buffer, callback)
