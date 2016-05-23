@@ -13,10 +13,10 @@
 //
 
 
-var PelcoD = require('../pelcod')
+var PelcoD = require('../pelcod');
 var keypress = require('keypress');
-var SerialPort = require("serialport").SerialPort
-var SERIAL_PORT = 'COM21'  // Linux example is  /dev/ttyUSB1
+var SerialPort = require("serialport").SerialPort;
+var SERIAL_PORT = '/dev/ttyUSB0';  // COM1 or /dev/ttyUSB0
 var CAMERA_ADDRESS = 1;
 
 var serialPort = new SerialPort(SERIAL_PORT, {
@@ -38,9 +38,9 @@ var stream = serialPort.on("open", function(err){
 		console.log('Error: '+err);
 		return;
 	} else {
-		pelcod = new PelcoD(stream)
-		pelcod.setAddress(CAMERA_ADDRESS)
-		read_and_process_keyboard()
+		pelcod = new PelcoD(stream);
+		pelcod.setAddress(CAMERA_ADDRESS);
+		read_and_process_keyboard();
 	}
 });
 
@@ -60,9 +60,9 @@ function read_and_process_keyboard() {
 	process.stdin.on('keypress', function (ch, key) {
 
 		/* Exit on 'q' or 'Q' or 'CTRL C' */
-		if ((key && key.ctrl && key.name == 'c')
-			 || (key && key.name == 'q')) {
-				process.exit();
+		if ((key && key.ctrl && key.name == 'c') ||
+		    (key && key.name == 'q')) {
+			process.exit();
 		}
 
 
@@ -95,8 +95,8 @@ function read_and_process_keyboard() {
 		// Move the camera
 		console.log('sending move command ' + msg);
 
-		pelcod.bytes.clearAll(false)
-		pelcod.setAddress(CAMERA_ADDRESS)
+		pelcod.bytes.clearAll(false);
+		pelcod.setAddress(CAMERA_ADDRESS);
 		if (pan_direction<0) pelcod.left(true);
 		if (pan_direction>0) pelcod.right(true);
 		if (tilt_direction>0) pelcod.up(true);
@@ -105,8 +105,8 @@ function read_and_process_keyboard() {
 		pelcod.setTiltSpeed(TILT_SPEED);
 
 		// Zoom
-		if (zoom_direction>0) pelcod.bytes.getCom2().on(5)
-		if (zoom_direction<0) pelcod.bytes.getCom2().on(6)
+		if (zoom_direction>0) pelcod.bytes.getCom2().on(5);
+		if (zoom_direction<0) pelcod.bytes.getCom2().on(6);
 
 		pelcod.send();
 
@@ -118,7 +118,7 @@ function read_and_process_keyboard() {
 
 	function stop() {
 		console.log('sending stop command');
-		pelcod.stop().send()
+		pelcod.stop().send();
 	}
 
 
@@ -128,8 +128,8 @@ function read_and_process_keyboard() {
 			.setCom1(0x00)
 			.setCom2(0x07)
 			.setData1(0x00)
-			.setData2(preset_number)
-		pelcod.send()
+			.setData2(preset_number);
+		pelcod.send();
 
 	}
 
