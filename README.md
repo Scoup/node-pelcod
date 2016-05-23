@@ -1,4 +1,4 @@
-# node-pelcod
+﻿# node-pelcod
 
 Module to comunicate with Pelco D protocol.
 
@@ -34,7 +34,7 @@ Before you can control any Pelco-D cameras, you need to prepare the following it
    - An RS232 / RS485 converter
 
 
-Pelco D has standart and extend commands. The extend commands has to be used alone. The standart commands you can use in group.
+Pelco D has standard and extend commands. The extend commands has to be used alone. The standard commands you can use in group.
 
 ## Examples
 
