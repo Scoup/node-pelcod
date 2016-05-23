@@ -38,9 +38,14 @@ Pelco D has standard and extend commands. The extend commands has to be used alo
 
 ## Examples
 
-There is a example in ./example folder
+There is an example in ./example folder that reads Pan/Tilt control from a web browser and controls the camera
 
 [Youtube video](https://www.youtube.com/watch?v=MRMotnNFLpw)
+
+
+There is an example in ./example2 folder that reads the Cursor Keys and controls the camera from the command line, using the node 'keypress' package, with Pan,Tilt,Zoom and Presets
+
+
 
 ### Standart Group Command
 ```javascript
