@@ -1,4 +1,4 @@
-# node-pelcod
+﻿# node-pelcod
 
 Module to comunicate with Pelco D protocol.
 
@@ -34,13 +34,18 @@ Before you can control any Pelco-D cameras, you need to prepare the following it
    - An RS232 / RS485 converter
 
 
-Pelco D has standart and extend commands. The extend commands has to be used alone. The standart commands you can use in group.
+Pelco D has standard and extend commands. The extend commands has to be used alone. The standard commands you can use in group.
 
 ## Examples
 
-There is a example in ./example folder
+There is an example in ./example folder that reads Pan/Tilt control from a web browser and controls the camera
 
 [Youtube video](https://www.youtube.com/watch?v=MRMotnNFLpw)
+
+
+There is an example in ./example2 folder that reads the Cursor Keys and controls the camera from the command line, using the node 'keypress' package, with Pan,Tilt,Zoom and Presets
+
+
 
 ### Standart Group Command
 ```javascript
