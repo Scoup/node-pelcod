@@ -9,8 +9,8 @@
   "author": "Léo Haddad M. C. Carneiro <scoup001@gmail.com> (http://github.com/Scoup)",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "~1.19.0",
-    "chai": "~1.9.1"
+    "mocha": "~2.5.3",
+    "chai": "~3.5.0"
   },
   "directories": {
     "example": "example",
