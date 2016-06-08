@@ -42,7 +42,7 @@
  *  The check sum is the 8 bit (modulo 256) sum of the payload bytes (bytes 2 through 6) in the message.
  *
  *
- *  **** STANDART COMMAND SET ****
+ *  **** STANDARD COMMAND SET ****
  *  +-----------+-----------+----------+-----------+--------------------+-----------------+------------+-----------+------------+
  *  |           |   BIT 7   |  BIT 6   |   BIT 5   |       BIT 4        |      BIT 3      |   BIT 2    |   BIT 1   |   BIT 0    |
  *  +-----------+-----------+----------+-----------+--------------------+-----------------+------------+-----------+------------+
@@ -182,20 +182,33 @@ function PelcoD(stream, options) {
         , 0x00                        // checksum
     ]
 
+    var extended_bts = [
+        SYNC                        // sync
+        , this.options.defaultAddr  // address
+        , 0x00                        // command 1
+        , 0x00                        // command 2
+        , 0x00                        // data 1
+        , 0x00                        // data 2
+        , 0x00                        // checksum
+    ]
+    
     this.bytes = new Bytes(bts)
+    this.extended_bytes = new Bytes(extended_bts)
 }
+
 
 /**** CONFIG COMMANDS ****/
 
 PelcoD.prototype.setAddress = function(value) {
     this.bytes.setAddress(value)
+    this.extended_bytes.setAddress(value)
 }
 
 PelcoD.prototype.setAddrDefault = function(value) {
     this.options.defaultAddr = this.options.addrs[value]
 }
 
-/**** STANDART COMMAND SET ****/
+/**** STANDARD COMMAND SET ****/
 
 PelcoD.prototype.setPanSpeed = function(speed) {
     if(speed < 0x00 || speed > 0xFF)
@@ -251,32 +264,210 @@ PelcoD.prototype.right = function(status) {
     return this
 }
 
-/***** EXTENDED COMMANDS *****/
-
-PelcoD.prototype.setPreset = function(position, callback) {
-    var bkp = this.bytes
-
-    this.bytes.clearAll()
-        .setCom2(0x03)
-        .setData2(position)
-
-    this.build(callback)
-
-    this.bytes = bkp
+PelcoD.prototype.focusNear = function(status) {
+    if(status === true) {
+        this.bytes.getCom1().on(0x00)
+        this.bytes.getCom2().off(0x07)
+    } else {
+        this.bytes.getCom1().off(0x00)
+    }
     return this
 }
 
-PelcoD.prototype.clearPreset = function(position) {
-    var bkp = this.bytes
+PelcoD.prototype.focusFar = function(status) {
+    if(status === true) {
+        this.bytes.getCom2().on(0x07)
+        this.bytes.getCom1().off(0x00)
+    } else {
+        this.bytes.getCom2().off(0x07)
+    }
+    return this
+}
 
-    this.bytes.clearAll()
+PelcoD.prototype.irisOpen = function(status) {
+    if(status === true) {
+        this.bytes.getCom1().on(0x01)
+        this.bytes.getCom1().off(0x02)
+    } else {
+        this.bytes.getCom1().off(0x01)
+    }
+    return this
+}
+
+PelcoD.prototype.irisClose = function(status) {
+    if(status === true) {
+        this.bytes.getCom1().on(0x02)
+        this.bytes.getCom1().off(0x01)
+    } else {
+        this.bytes.getCom1().off(0x02)
+    }
+    return this
+}
+
+PelcoD.prototype.zoomIn = function(status) {
+    if(status === true) {
+        this.bytes.getCom2().on(0x05)
+        this.bytes.getCom2().off(0x06)
+    } else {
+        this.bytes.getCom2().off(0x05)
+    }
+    return this
+}
+
+PelcoD.prototype.zoomOut = function(status) {
+    if(status === true) {
+        this.bytes.getCom2().on(0x06)
+        this.bytes.getCom2().off(0x05)
+    } else {
+        this.bytes.getCom2().off(0x06)
+    }
+    return this
+}
+
+
+/***** ENUM METHODS *****/
+/*
+PelcoD.prototype.PAN = { STOP: 0, LEFT: 1, RIGHT: 2 };
+PelcoD.prototype.TILT = { STOP: 0, UP: 1, DOWN: 2 };
+PelcoD.prototype.ZOOM = { STOP: 0, IN: 1, OUT: 2 };
+PelcoD.prototype.FOCUS = { STOP: 0, NEAR: 1, FAR: 2 };
+PelcoD.prototype.IRIS = { STOP: 0, OPEN: 1, CLOSE: 2 };
+
+PelcoD.prototype.setPan = function(status) {
+    if(status === this.PAN.STOP) {
+        this.bytes.getCom2().off(0x01)
+        this.bytes.getCom2().off(0x02)
+    }
+    if(status === this.PAN.LEFT) {
+        this.bytes.getCom2().off(0x01)
+        this.bytes.getCom2().on(0x02)
+    }
+    if(status === this.PAN.RIGHT) {
+        this.bytes.getCom2().on(0x01)
+        this.bytes.getCom2().off(0x02)
+    }
+    return this
+}
+
+PelcoD.prototype.setTilt = function(status) {
+    if(status === this.TILT.STOP) {
+        this.bytes.getCom2().off(0x03)
+        this.bytes.getCom2().off(0x04)
+    }
+    if(status === this.TILT.UP) {
+        this.bytes.getCom2().on(0x03)
+        this.bytes.getCom2().off(0x04)
+    }
+    if(status === this.TILT.DOWN) {
+        this.bytes.getCom2().off(0x03)
+        this.bytes.getCom2().on(0x04)
+    }
+    return this
+}
+
+PelcoD.prototype.setFocus = function(status) {
+    if(status === this.FOCUS.STOP) {
+        this.bytes.getCom1().off(0x00)
+        this.bytes.getCom2().off(0x07)
+    }
+    if(status === this.FOCUS.NEAR) {
+        this.bytes.getCom1().on(0x00)
+        this.bytes.getCom2().off(0x07)
+    }
+    if(status === this.FOCUS.FAR) {
+        this.bytes.getCom1().off(0x00)
+        this.bytes.getCom2().on(0x07)
+    }
+    return this
+}
+
+PelcoD.prototype.setIris = function(status) {
+    if(status === this.IRIS.STOP) {
+        this.bytes.getCom1().off(0x01)
+        this.bytes.getCom1().off(0x02)
+    }
+    if(status === this.IRIS.OPEN) {
+        this.bytes.getCom1().on(0x01)
+        this.bytes.getCom1().off(0x02)
+    }
+    if(status === this.IRIS.CLOSE) {
+        this.bytes.getCom1().off(0x01)
+        this.bytes.getCom1().on(0x02)
+    }
+    return this
+}
+
+PelcoD.prototype.setZoom = function(status) {
+    if(status === this.ZOOM.STOP) {
+        this.bytes.getCom2().off(0x05)
+        this.bytes.getCom2().off(0x06)
+    }
+    if(status === this.ZOOM.IN) {
+        this.bytes.getCom2().on(0x05)
+        this.bytes.getCom2().off(0x06)
+    }
+    if(status === this.ZOOM.OUT) {
+        this.bytes.getCom2().off(0x05)
+        this.bytes.getCom2().on(0x06)
+    }
+    return this
+}
+*/
+
+/***** EXTENDED COMMANDS *****/
+
+PelcoD.prototype.sendSetPreset = function(position, callback) {
+    this.extended_bytes.clearAll(false)
+        .setCom2(0x03)
+        .setData2(position)
+       
+    this.send_extended(callback)
+
+    return this
+}
+
+PelcoD.prototype.sendClearPreset = function(position, callback) {
+    this.extended_bytes.clearAll(false)
         .setCom2(0x05)
         .setData2(position)
 
-    this.build(callback)
-    this.bytes = bkp
+    this.send_extended(callback)
+
     return this
 }
+
+PelcoD.prototype.sendGotoPreset = function(position, callback) {
+    this.extended_bytes.clearAll(false)
+        .setCom2(0x07)
+        .setData2(position)
+
+    this.send_extended(callback)
+
+    return this
+}
+
+PelcoD.prototype.sendSetAux = function(aux, callback) {
+    this.extended_bytes.clearAll(false)
+        .setCom2(0x09)
+        .setData2(aux)
+
+    this.send_extended(callback)
+
+    return this
+}
+
+PelcoD.prototype.sendClearAux = function(aux, callback) {
+    this.extended_bytes.clearAll(false)
+        .setCom2(0x0B)
+        .setData2(aux)
+
+    this.send_extended(callback)
+
+    return this
+}
+
+
+/**** OTHER COMMANDS ****/
 
 PelcoD.prototype.setCamera = function(status) {
     if(status === true) {
@@ -297,13 +488,6 @@ PelcoD.prototype.setCameraAuto = function(status) {
     return this
 }
 
-PelcoD.prototype.setFocusNear = function(status) {
-    if(status === true) 
-        this.bytes.getCom1().on(0x00)
-    else
-        this.bytes.getCom1().off(0x00)    
-    return this
-}
 
 /**** HELPFUL COMMANDS ****/
 
@@ -317,6 +501,12 @@ PelcoD.prototype.stop = function() {
         .right(0)
         .up(0)
         .down(0)
+        .zoomIn(0)
+        .zoomOut(0)
+        .focusNear(0)
+        .focusFar(0)
+        .irisOpen(0)
+        .irisClose(0)
 
     return this
 }
@@ -332,6 +522,16 @@ PelcoD.prototype.send = function(callback) {
         this.stream.write(buffer, callback)
     return this
 }
+
+PelcoD.prototype.send_extended = function(callback) {
+    var buffer = this.extended_bytes.getBuffer()
+    if(typeof(this.stream) === 'undefined' || typeof(this.stream.write) === 'undefined')
+        console.warn('Stream pipe not found')
+    else
+        this.stream.write(buffer, callback)
+    return this
+}
+
 
 module.exports = PelcoD;
 
