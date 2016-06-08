@@ -175,7 +175,7 @@ describe('PelcoD', function(){
             expect(1).to.be.equal(1)
         })
         it("should send valid data and valid checksum", function(){
-            var stream = new MemoryStreams.WritableStream() 
+            var stream = new MemoryStreams.WritableStream()
             var pelcod = new PelcoD(stream, {})
             pelcod.bytes.clearAll(false)
             pelcod.setAddress(1);
@@ -189,6 +189,22 @@ describe('PelcoD', function(){
             expect(stream.toBuffer()[4]).to.be.equal(0x00)
             expect(stream.toBuffer()[5]).to.be.equal(0x3F)
             expect(stream.toBuffer()[6]).to.be.equal(0x48)
+        })
+        it("should test checksum mod 256", function(){
+            var stream = new MemoryStreams.WritableStream() 
+            var pelcod = new PelcoD(stream, {})
+            pelcod.bytes.clearAll(false)
+            pelcod.setAddress(240);
+            pelcod.up(true);
+            pelcod.setTiltSpeed(0x3F);
+            pelcod.send()
+            expect(stream.toBuffer()[0]).to.be.equal(0xFF)
+            expect(stream.toBuffer()[1]).to.be.equal(240)
+            expect(stream.toBuffer()[2]).to.be.equal(0x00)
+            expect(stream.toBuffer()[3]).to.be.equal(0x08)
+            expect(stream.toBuffer()[4]).to.be.equal(0x00)
+            expect(stream.toBuffer()[5]).to.be.equal(0x3F)
+            expect(stream.toBuffer()[6]).to.be.equal(0x37)
         })
     })
 

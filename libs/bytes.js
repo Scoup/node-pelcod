@@ -112,7 +112,7 @@ function setChecksum(byteArray) {
 		sum += byteArray[i]
 	}
 
-	sum = sum % 0xFF
+	sum = sum % 256
 
 	byteArray[max++] = sum
 	return byteArray
