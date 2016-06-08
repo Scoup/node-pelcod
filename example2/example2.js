@@ -16,7 +16,7 @@
 var PelcoD = require('../pelcod');
 var keypress = require('keypress');
 var SerialPort = require("serialport").SerialPort;
-var SERIAL_PORT = '/dev/ttyUSB0';  // COM1 or /dev/ttyUSB0
+var SERIAL_PORT = 'COM1';  // COM1 or /dev/ttyUSB0
 var CAMERA_ADDRESS = 1;
 
 var serialPort = new SerialPort(SERIAL_PORT, {
@@ -32,6 +32,7 @@ var PAN_SPEED = 10;
 var TILT_SPEED = 10;
 var STOP_DELAY_MS = 50;
 var stop_timer;
+var last_ch = '';
 
 var stream = serialPort.on("open", function(err){
 	if (err) {
@@ -53,7 +54,12 @@ function read_and_process_keyboard() {
 	console.log('PELCO TELEMETRY CONTROL for Camera ' + CAMERA_ADDRESS + ' Sending to ' + SERIAL_PORT);
 	console.log('Press Cursor Keys to move camera');
 	console.log('Press + and - to zoom.');
-	console.log('Press 1 to 9 to goto preset.');
+	console.log('Press i or I for Iris Open/Close control.');
+	console.log('Press f or F for Focus Near/Far control.');
+	console.log('Press p1 to p9 to goto preset.');
+	console.log('Press s1 to s9 to set preset.');
+	console.log('Press a1 to a9 to turn Aux On.');
+	console.log('Press A1 to A9 to turn Aux Off.');
 	console.log('Press q to quit');
 
 	// keypress handler
@@ -69,21 +75,50 @@ function read_and_process_keyboard() {
 		if (ch) console.log('got "keypress character"',ch);
 		else if (key) console.log('got "keypress"',key.name);
 
-		if      (key && key.name == 'up')    move(0,1,0,'up');
-		else if (key && key.name == 'down')  move(0,-1,0,'down');
-		else if (key && key.name == 'left')  move(-1,0,0,'left');
-		else if (key && key.name == 'right') move(1,0,0,'right');
-		else if (ch  && ch       == '-')     move(0,0,-1,'zoom out');
-		else if (ch  && ch       == '+')     move(0,0,1,'zoom in');
+		if      (key && key.name == 'up')    move(0,1,0,0,0,'up');
+		else if (key && key.name == 'down')  move(0,-1,0,0,0,'down');
+		else if (key && key.name == 'left')  move(-1,0,0,0,0,'left');
+		else if (key && key.name == 'right') move(1,0,0,0,0,'right');
+		else if (key && key.name == 'home')  move(-1,1,0,0,0,'up left');
+		else if (key && key.name == 'pageup') move(1,1,0,0,0,'up right');
+		else if (key && key.name == 'end')   move(-1,-1,0,0,0,'down left');
+		else if (key && key.name == 'pagedown') move(1,-1,0,0,0,'down right');
+		
+		else if (ch  && ch       == '-')     move(0,0,-1,0,0,'zoom out');
+		else if (ch  && ch       == '+')     move(0,0,1,0,0,'zoom in');
 		// On English keyboards '+' is "Shift and = key"
 		// Accept the "=" key as zoom in
-		else if (ch  && ch       == '=')     move(0,0,1,'zoom in');
-		else if (ch  && ch>='1' && ch <='9') goto_preset(ch);
+		else if (ch  && ch       == '=')     move(0,0,1,0,0,'zoom in');
+		else if (ch  && ch       == 'f')     move(0,0,0,1,0,'focus near');
+		else if (ch  && ch       == 'F')     move(0,0,0,-1,0,'focus far');
+		else if (ch  && ch       == 'i')     move(0,0,0,0,1,'iris open');
+		else if (ch  && ch       == 'I')     move(0,0,0,0,-1,'iris close');
+		
+		// check if last_char was p,s,a or A and current char is a number
+		else if (ch  && ch>='1' && ch <='9' && last_ch === 'p') goto_preset(ch);
+		else if (ch  && ch>='1' && ch <='9' && last_ch === 's') set_preset(ch);
+		else if (ch  && ch>='1' && ch <='9' && last_ch === 'a') set_aux(ch);
+		else if (ch  && ch>='1' && ch <='9' && last_ch === 'A') clear_aux(ch);
+		
+		// last character was not a special letter so use the numeric value for PTZ
+		else if (ch && ch == '8')  move(0,1,0,0,0,'up');
+		else if (ch && ch == '2')  move(0,-1,0,0,0,'down');
+		else if (ch && ch == '4')  move(-1,0,0,0,0,'left');
+		else if (ch && ch == '6')  move(1,0,0,0,0,'right');
+		else if (ch && ch == '7')  move(-1,1,0,0,0,'up left');
+		else if (ch && ch == '9')  move(1,1,0,0,0,'up right');
+		else if (ch && ch == '1')  move(-1,-1,0,0,0,'down left');
+		else if (ch && ch == '3')  move(1,-1,0,0,0,'down right');
+		else if (ch && ch == '5')  move(0,0,0,0,0,'stop');
+
+
+       if (ch) last_ch = ch;
+
 	});
 
 
 
-	function move(pan_direction, tilt_direction, zoom_direction, msg) {
+	function move(pan_direction, tilt_direction, zoom_direction, focus_direction, iris_direction, msg) {
 		// Step 1 - Turn off the keyboard processing (so keypresses do not buffer up)
 		// Step 2 - Clear any existing 'stop' timeouts. We will re-schedule a new 'stop' command in this function 
 		// Step 3 - Send the Pan/Tilt/Zoom 'move' command.
@@ -105,8 +140,16 @@ function read_and_process_keyboard() {
 		pelcod.setTiltSpeed(TILT_SPEED);
 
 		// Zoom
-		if (zoom_direction>0) pelcod.bytes.getCom2().on(5);
-		if (zoom_direction<0) pelcod.bytes.getCom2().on(6);
+		if (zoom_direction>0) pelcod.zoomIn(true);
+		if (zoom_direction<0) pelcod.zoomOut(true);
+
+		// Focus
+		if (focus_direction>0) pelcod.focusNear(true);
+		if (focus_direction<0) pelcod.focusFar(true);
+
+		// Iris
+		if (iris_direction>0) pelcod.irisOpen(true);
+		if (iris_direction<0) pelcod.irisClose(true);
 
 		pelcod.send();
 
@@ -124,15 +167,23 @@ function read_and_process_keyboard() {
 
 	function goto_preset(preset_number) {
 		console.log('sending goto preset command '+ preset_number);
-		pelcod.bytes.setAddress(CAMERA_ADDRESS)
-			.setCom1(0x00)
-			.setCom2(0x07)
-			.setData1(0x00)
-			.setData2(preset_number);
-		pelcod.send();
-
+		pelcod.sendGotoPreset(preset_number);
 	}
 
+	function set_preset(preset_number) {
+		console.log('sending set preset command '+ preset_number);
+		pelcod.sendSetPreset(preset_number);
+	}
+
+	function set_aux(aux_number) {
+		console.log('sending set aux command '+ aux_number);
+		pelcod.sendSetAux(aux_number);
+	}
+
+	function clear_aux(aux_number) {
+		console.log('sending clear aux command '+ aux_number);
+		pelcod.sendClearAux(aux_number);
+	}
 }
 
 
