@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "node-pelcod",
   "version": "0.2.0",
   "description": "Module to comunicate with Pelco D protocol",
@@ -13,7 +13,9 @@
     "mocha": "~2.5.3",
     "chai": "~3.5.0",
     "memory-streams": "~0.1.0",
-    "istanbul": "~0.4.3"
+    "istanbul": "~0.4.3",
+    "keypress": "~0.2.1",
+    "serialport": "^3.1.2"
   },
   "directories": {
     "example": "example",
