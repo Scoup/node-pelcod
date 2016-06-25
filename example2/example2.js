@@ -132,12 +132,27 @@ function read_and_process_keyboard() {
 
 		pelcod.bytes.clearAll(false);
 		pelcod.setAddress(CAMERA_ADDRESS);
-		if (pan_direction<0) pelcod.left(true);
-		if (pan_direction>0) pelcod.right(true);
-		if (tilt_direction>0) pelcod.up(true);
-		if (tilt_direction<0) pelcod.down(true);
-		pelcod.setPanSpeed(PAN_SPEED);
-		pelcod.setTiltSpeed(TILT_SPEED);
+
+		// Pan and Tilt
+		if (pan_direction<0) {
+			pelcod.left(true);
+			pelcod.setPanSpeed(PAN_SPEED);
+		}
+
+		if (pan_direction>0) {
+			pelcod.right(true);
+			pelcod.setPanSpeed(PAN_SPEED);
+		}
+
+		if (tilt_direction>0) {
+			pelcod.up(true);
+			pelcod.setTiltSpeed(TILT_SPEED);
+		}
+
+		if (tilt_direction<0) {
+			pelcod.down(true);
+			pelcod.setTiltSpeed(TILT_SPEED);
+		}
 
 		// Zoom
 		if (zoom_direction>0) pelcod.zoomIn(true);
