@@ -15,7 +15,7 @@
     "memory-streams": "~0.1.0",
     "istanbul": "~0.4.3",
     "keypress": "~0.2.1",
-    "serialport": "^3.1.2"
+    "serialport": "^4.0.0"
   },
   "directories": {
     "example": "example",
