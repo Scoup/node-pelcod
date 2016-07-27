@@ -15,8 +15,8 @@
 
 var PelcoD = require('../pelcod');
 var keypress = require('keypress');
-var SerialPort = require("serialport").SerialPort;
-var SERIAL_PORT = 'COM1';  // COM1 or /dev/ttyUSB0
+var SerialPort = require("serialport");
+var SERIAL_PORT = '/dev/ttyUSB0';  // COM1 or /dev/ttyUSB0
 var CAMERA_ADDRESS = 1;
 
 var serialPort = new SerialPort(SERIAL_PORT, {
