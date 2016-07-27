@@ -89,6 +89,7 @@ sendClearPreset(num)
 sendGotoPreset(num)
 sendSetAux(num)
 sendClearAux(num)
+sendSetZoomSpeed(num)
 ```
 
 
@@ -105,6 +106,7 @@ $ mocha
 ## Release History
 - v0.1 - Started the first release
 - v0.2 - Added the rest of the standard commands and several extended commands (contributed by Roger Hardiman)
+- v0.3 - Extra extended commands (contributed by Roger Hardiman)
 
 ## License
 

@@ -317,5 +317,18 @@ describe('PelcoD', function(){
             expect(stream.toBuffer()[5]).to.be.equal(0x05)
             expect(stream.toBuffer()[6]).to.be.equal(0x20)
         })
+        it("should send Set Zoom Speed", function(){
+            var stream = new MemoryStreams.WritableStream() 
+            var pelcod = new PelcoD(stream, {})
+            pelcod.setAddress(1)
+            pelcod.sendSetZoomSpeed(2)
+            expect(stream.toBuffer()[0]).to.be.equal(0xFF)
+            expect(stream.toBuffer()[1]).to.be.equal(0x01)
+            expect(stream.toBuffer()[2]).to.be.equal(0x00)
+            expect(stream.toBuffer()[3]).to.be.equal(0x25)
+            expect(stream.toBuffer()[4]).to.be.equal(0x00)
+            expect(stream.toBuffer()[5]).to.be.equal(0x02)
+            expect(stream.toBuffer()[6]).to.be.equal(0x28)
+        })
     });
 })

@@ -28,8 +28,9 @@ var serialPort = new SerialPort(SERIAL_PORT, {
 
 
 var pelcod;
-var PAN_SPEED = 10;
-var TILT_SPEED = 10;
+var PAN_SPEED = 32;  // range 0(stop), 1(slow) to 63 (fast)
+var TILT_SPEED = 32; // range 0(stop), 1(slow) to 63 (fast)
+var ZOOM_SPEED = 0;  // values 0(slow),1(low med),2(high med) or 3 (fast)
 var STOP_DELAY_MS = 50;
 var stop_timer;
 var last_ch = '';
@@ -155,8 +156,14 @@ function read_and_process_keyboard() {
 		}
 
 		// Zoom
-		if (zoom_direction>0) pelcod.zoomIn(true);
-		if (zoom_direction<0) pelcod.zoomOut(true);
+		if (zoom_direction>0) {
+			pelcod.zoomIn(true);
+			pelcod.sendSetZoomSpeed(ZOOM_SPEED);
+		}
+		if (zoom_direction<0) {
+			pelcod.zoomOut(true);
+			pelcod.sendSetZoomSpeed(ZOOM_SPEED);
+		}
 
 		// Focus
 		if (focus_direction>0) pelcod.focusNear(true);
