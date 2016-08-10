@@ -1,5 +1,5 @@
-{
-  "name": "node-pelcod example",
+﻿{
+  "name": "node-pelcod-example",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -11,7 +11,7 @@
   "license": "BSD",
   "dependencies": {
     "express": "~4.2.0",
-    "serialport": "~1.4.0",
+    "serialport": "~4.0.0",
     "socket.io": "~0.9.16"
   }
 }
