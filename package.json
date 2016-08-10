@@ -1,6 +1,6 @@
 ﻿{
   "name": "node-pelcod",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Module to communicate with Pelco D protocol",
   "main": "pelcod.js",
   "scripts": {
