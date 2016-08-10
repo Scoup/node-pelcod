@@ -14,10 +14,10 @@ server.listen(8000)
 
 var PelcoD = require('../pelcod')
 
-var SerialPort = require("serialport").SerialPort
+var SerialPort = require("serialport")
 var serialPort = new SerialPort("/dev/ttyUSB0", {
   baudrate: 2400,
-  parity: false,
+  parity: 'none',
   dataBits: 8,
   stopBits: 1,
 });
@@ -45,6 +45,7 @@ var stream = serialPort.on("open", function(){
         })
 
         socket.on('stop', function(){
+            // console.log('stop');
             pelcod.stop().send()
         })
     })
@@ -52,5 +53,7 @@ var stream = serialPort.on("open", function(){
 
 function getSpeed(value) {
     value = Math.abs(value) * 2
+    if (value > 63) value = 63; // upper limit
+    if (value < 10) value = 0;  // ignore very slow speeds
     return value;
 }
