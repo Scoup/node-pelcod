@@ -466,6 +466,15 @@ PelcoD.prototype.sendClearAux = function(aux, callback) {
     return this
 }
 
+PelcoD.prototype.sendSetZoomSpeed = function(speed, callback) {
+    this.extended_bytes.clearAll(false)
+        .setCom2(0x25)
+        .setData2(speed)
+
+    this.send_extended(callback)
+
+    return this
+}
 
 /**** OTHER COMMANDS ****/
 
