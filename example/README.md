@@ -21,11 +21,9 @@ $ node server.js
 
 Next change the path of serial port in server.js here: `new SerialPort("/dev/ttyUSB0"...`, the "/dev/ttyUSB0" to your own path. On Windows the path is "COM1".
 
-Then change the file `./public/js/script.js` on line 3 to your IP address.
-
 The default Pelco D address camera is 0x01.
 
-Open your browser in http://your_ip:8000
+Open your browser in http://your_ip:8000 and then using a swipe you can Pan and Tilt the camera.
 
 ## License
 

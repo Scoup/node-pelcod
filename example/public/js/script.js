@@ -1,6 +1,6 @@
 (function() {
     $(document).ready(function() {
-        socket = io.connect('192.168.2.113');
+        socket = io.connect(window.location.hostname);
 
         var startX = 0;
         var startY = 0;
@@ -10,14 +10,24 @@
             swipeStatus: function(ev, phase, direction, distance, duration, fingerCount) {
 
                 if(phase == 'start') {
-                    startX = ev.changedTouches[0].clientX;
-                    startY = ev.changedTouches[0].clientY;
+                    if (ev.changedTouches) {
+                        startX = ev.changedTouches[0].clientX;
+                        startY = ev.changedTouches[0].clientY;
+                    } else {
+                        startX = ev.clientX;
+                        startY = ev.clientY;
+                    }
                     var startTime = new Date().getTime();
                 }
 
                 if(phase == 'move' || phase == 'end') {
-                    var x = ev.changedTouches[0].clientX;
-                    var y = ev.changedTouches[0].clientY;
+                    if (ev.changedTouches) {
+                      var x = ev.changedTouches[0].clientX;
+                      var y = ev.changedTouches[0].clientY;
+                    } else {
+                      var x = ev.clientX;
+                      var y = ev.clientY;
+                    }
                     var t = new Date().getTime();
                     clearTimeout(timer)
                     if(Math.abs(startX - x) > 10 || Math.abs(startY - y) > 10) {
