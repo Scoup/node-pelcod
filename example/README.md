@@ -1,4 +1,4 @@
-# Example of node-pelcod
+﻿# Example of node-pelcod
 
 This example show how to comunicate with a pelco d camera and control it from a webpage
 
@@ -6,20 +6,25 @@ This example show how to comunicate with a pelco d camera and control it from a 
 
 ## Getting Started
 
-First you need to connect your pelco d camera to a RS232 / RS485 converter then to USB/RS-232 converter.
-Change the path of serial port in server.js here: `new SerialPort("/dev/ttyUSB0"...`, the "/dev/ttyUSB0" to your own path.
-The default address camera is 0x01.
+First you need to connect your Pelco D camera to a USB RS485 adapter (or to a USB RS232 adapter which has a RS232 to RS485 converter fitted).   [RS485 uses 2 wires for the transmit data, RS232 uses 1 wire].
 
+Then install the software
 ```
 $ git clone https://github.com/Scoup/node-pelcod
 $ cd node-pelcod/example
 $ npm install
 $ bower install
+$ echo Remember to change server.js and script.js with serial port and IP address settings (see below)
 $ node server.js
 ```
-*Obs: install [bower](https://github.com/bower/bower) if dont have it
+*Obs: install [bower](https://github.com/bower/bower) if don't have it
 
-Change the file `./public/js/script.js` on line 3 to your ip.
+Next change the path of serial port in server.js here: `new SerialPort("/dev/ttyUSB0"...`, the "/dev/ttyUSB0" to your own path. On Windows the path is "COM1".
+
+Then change the file `./public/js/script.js` on line 3 to your IP address.
+
+The default Pelco D address camera is 0x01.
+
 Open your browser in http://your_ip:8000
 
 ## License
