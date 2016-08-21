@@ -14,10 +14,12 @@
 
 
 var PelcoD = require('../pelcod');
+var PelcoP = require('../pelcop');
 var keypress = require('keypress');
 var SerialPort = require("serialport");
-var SERIAL_PORT = '/dev/ttyUSB0';  // COM1 or /dev/ttyUSB0
+var SERIAL_PORT = '/dev/cu.usbserial';  // COM1 or /dev/ttyUSB0
 var CAMERA_ADDRESS = 1;
+var PROTOCOL='D'; // 'P' or 'D'
 
 var serialPort = new SerialPort(SERIAL_PORT, {
   baudrate: 2400,
@@ -27,7 +29,7 @@ var serialPort = new SerialPort(SERIAL_PORT, {
 });
 
 
-var pelcod;
+var pelco;
 var PAN_SPEED = 32;  // range 0(stop), 1(slow) to 63 (fast)
 var TILT_SPEED = 32; // range 0(stop), 1(slow) to 63 (fast)
 var ZOOM_SPEED = 0;  // values 0(slow),1(low med),2(high med) or 3 (fast)
@@ -40,8 +42,9 @@ var stream = serialPort.on("open", function(err){
 		console.log('Error: '+err);
 		return;
 	} else {
-		pelcod = new PelcoD(stream);
-		pelcod.setAddress(CAMERA_ADDRESS);
+		if (PROTOCOL === 'P') pelco = new PelcoP(stream);
+		else pelco = new PelcoD(stream);
+		pelco.setAddress(CAMERA_ADDRESS);
 		read_and_process_keyboard();
 	}
 });
@@ -131,49 +134,49 @@ function read_and_process_keyboard() {
 		// Move the camera
 		console.log('sending move command ' + msg);
 
-		pelcod.bytes.clearAll(false);
-		pelcod.setAddress(CAMERA_ADDRESS);
+		pelco.bytes.clearAll(false);
+		pelco.setAddress(CAMERA_ADDRESS);
 
 		// Pan and Tilt
 		if (pan_direction<0) {
-			pelcod.left(true);
-			pelcod.setPanSpeed(PAN_SPEED);
+			pelco.left(true);
+			pelco.setPanSpeed(PAN_SPEED);
 		}
 
 		if (pan_direction>0) {
-			pelcod.right(true);
-			pelcod.setPanSpeed(PAN_SPEED);
+			pelco.right(true);
+			pelco.setPanSpeed(PAN_SPEED);
 		}
 
 		if (tilt_direction>0) {
-			pelcod.up(true);
-			pelcod.setTiltSpeed(TILT_SPEED);
+			pelco.up(true);
+			pelco.setTiltSpeed(TILT_SPEED);
 		}
 
 		if (tilt_direction<0) {
-			pelcod.down(true);
-			pelcod.setTiltSpeed(TILT_SPEED);
+			pelco.down(true);
+			pelco.setTiltSpeed(TILT_SPEED);
 		}
 
 		// Zoom
 		if (zoom_direction>0) {
-			pelcod.zoomIn(true);
-			pelcod.sendSetZoomSpeed(ZOOM_SPEED);
+			pelco.zoomIn(true);
+			pelco.sendSetZoomSpeed(ZOOM_SPEED);
 		}
 		if (zoom_direction<0) {
-			pelcod.zoomOut(true);
-			pelcod.sendSetZoomSpeed(ZOOM_SPEED);
+			pelco.zoomOut(true);
+			pelco.sendSetZoomSpeed(ZOOM_SPEED);
 		}
 
 		// Focus
-		if (focus_direction>0) pelcod.focusNear(true);
-		if (focus_direction<0) pelcod.focusFar(true);
+		if (focus_direction>0) pelco.focusNear(true);
+		if (focus_direction<0) pelco.focusFar(true);
 
 		// Iris
-		if (iris_direction>0) pelcod.irisOpen(true);
-		if (iris_direction<0) pelcod.irisClose(true);
+		if (iris_direction>0) pelco.irisOpen(true);
+		if (iris_direction<0) pelco.irisClose(true);
 
-		pelcod.send();
+		pelco.send();
 
 
 		// Schedule a Stop command to run in the future 
@@ -183,28 +186,28 @@ function read_and_process_keyboard() {
 
 	function stop() {
 		console.log('sending stop command');
-		pelcod.stop().send();
+		pelco.stop().send();
 	}
 
 
 	function goto_preset(preset_number) {
 		console.log('sending goto preset command '+ preset_number);
-		pelcod.sendGotoPreset(preset_number);
+		pelco.sendGotoPreset(preset_number);
 	}
 
 	function set_preset(preset_number) {
 		console.log('sending set preset command '+ preset_number);
-		pelcod.sendSetPreset(preset_number);
+		pelco.sendSetPreset(preset_number);
 	}
 
 	function set_aux(aux_number) {
 		console.log('sending set aux command '+ aux_number);
-		pelcod.sendSetAux(aux_number);
+		pelco.sendSetAux(aux_number);
 	}
 
 	function clear_aux(aux_number) {
 		console.log('sending clear aux command '+ aux_number);
-		pelcod.sendClearAux(aux_number);
+		pelco.sendClearAux(aux_number);
 	}
 }
 
