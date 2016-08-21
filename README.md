@@ -1,6 +1,6 @@
 ﻿# node-pelcod
 
-Module to communicate with CCTV cameras using Pelco D protocol.
+Module to communicate with CCTV cameras using Pelco D protocol and Pelco P protocol.
 
 This module implements the standard commands (Pan/Tilt/Zoom/Focus/Iris) and some extended commands (Preset/Aux). Other commands are still missing. Be free to fork and help!
 
@@ -18,23 +18,28 @@ Requires a serial stream like [serialport](https://github.com/voodootikigod/node
 ### Config
 
 ```javascript
-var Pelcod = require('pelcod');
-var pelcod = new Pelcod(stream, options)
+var PelcoD = require('pelcod');
+var pelcoD = new PelcoD(stream, options)
+```
+
+```javascript
+var PelcoP = require('pelcop');
+var pelcoP = new PelcoP(stream, options)
 ```
 
 
 ## Documentation
 
-PelcoD requires a serial port module to write the data to.
+PelcoD module requires a serial port module to write the data to.
 
-Pelco D cameras use No parity, 8 Data bits and 1 Stop bit, baud rate depends on your camera setting but is often 2400
+Pelco cameras use No parity, 8 Data bits and 1 Stop bit, baud rate depends on your camera setting but is often 2400
 
-Before you can control any Pelco-D cameras, you need to prepare the following items:
+Before you can control any Pelco cameras, you need to prepare the following items:
    - A RS-232 port (or USB/RS-232 converter)
    - A RS232 / RS485 converter
 
 
-Pelco D has standard and extended commands. The standard command combines Pan,Tilt,Zoom,Focus,Iris,Pan Speed and Tilt Speed into a single command and so these commands can be used in a group. The extended commands carry out a single action.
+Pelco D and Pelco P protocols have standard and extended commands. The standard command combines Pan,Tilt,Zoom,Focus,Iris,Pan Speed and Tilt Speed into a single command and so these commands can be used in a group. The extended commands carry out a single action.
 
 ## Examples
 
@@ -43,7 +48,8 @@ There is an example in ./example folder that reads Pan/Tilt control from a web b
 [Youtube video](https://www.youtube.com/watch?v=MRMotnNFLpw)
 
 
-There is an example in ./example2 folder that reads the Cursor Keys and controls the camera from the command line, using the node 'keypress' package, with support for Pan, Tilt, Zoom, Focus, Iris, Presets and Aux functions
+There is an example in ./example2 folder that reads the Cursor Keys and controls the camera from the command line, using the node 'keypress' package, with support for Pan, Tilt, Zoom, Focus, Iris, Presets and Aux functions.
+Please edit the source for example2 to select D or P protocol, the serial port and the baud rate.
 
 
 
@@ -98,8 +104,14 @@ sendSetZoomSpeed(num)
 $ mocha
 ```
 
+## Coverage
+```shell
+$ npm run coverage
+```
+
+
 ## Todo List
-- Add pelcod test
+- Add more tests and Pelco P tests
 - Add documentation
 - Add more extended commands
 
@@ -107,6 +119,7 @@ $ mocha
 - v0.1 - Started the first release
 - v0.2 - Added the rest of the standard commands and several extended commands (contributed by Roger Hardiman)
 - v0.3 - Extra extended commands (contributed by Roger Hardiman)
+- v0.4 - Add Pelco P protocols
 
 ## License
 
