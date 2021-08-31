@@ -7,6 +7,10 @@
     "test": "mocha",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Scoup/node-pelcod.git"
+  },
   "author": "Léo Haddad M. C. Carneiro <scoup001@gmail.com> (http://github.com/Scoup)",
   "license": "MIT",
   "devDependencies": {
