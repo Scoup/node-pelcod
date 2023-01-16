@@ -22,7 +22,7 @@ var CAMERA_ADDRESS = 1;
 var PROTOCOL='D'; // 'P' or 'D'
 
 var serialPort = new SerialPort(SERIAL_PORT, {
-  baudrate: 2400,
+  baudRate: 2400,
   parity: 'none',
   dataBits: 8,
   stopBits: 1,
