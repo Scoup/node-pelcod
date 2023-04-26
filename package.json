@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "node-pelcod",
   "version": "0.3.0",
   "description": "Module to communicate with Pelco D protocol",
